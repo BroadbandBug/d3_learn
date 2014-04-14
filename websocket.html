@@ -47,8 +47,8 @@ var yAxis = d3.svg.axis()
     .orient("left");
 
 var line = d3.svg.line()
-    .x(function(d) { return x(d.index); })
-    .y(function(d) { return y(d.freq); });
+    .x(function(d,i) { return x(i); })
+    .y(function(d) { return y(d); });
 
 var svg = d3.select("body").append("svg")
     .attr("width", width + margin.left + margin.right)
@@ -56,14 +56,20 @@ var svg = d3.select("body").append("svg")
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-d3.csv("data.csv", function(error, data) {
-  data.forEach(function(d) {
-    d.index = +d.index;
-    d.freq = +d.freq;
-  });
+var ws;
+ws = new WebSocket("ws://localhost:8888/ws");
 
-  x.domain(d3.extent(data, function(d) { return d.index; }));
-  y.domain(d3.extent(data, function(d) { return d.freq; }));
+var fft_data;
+
+ws.onmessage = function(evt) {
+
+  var fft_data_str = JSON.parse(evt.data);
+  fft_data = new Float32Array( fft_data_str );
+
+  console.log( fft_data );
+  
+  x.domain([0, fft_data.length - 1]);
+  y.domain([0, d3.max(fft_data)]);
 
   svg.append("g")
       .attr("class", "x axis")
@@ -81,9 +87,9 @@ d3.csv("data.csv", function(error, data) {
       .text("Magnitude");
 
   svg.append("path")
-      .datum(data)
+      .datum(fft_data)
       .attr("class", "line")
       .attr("d", line);
-});
+};
 
 </script>
