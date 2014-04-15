@@ -38,9 +38,10 @@ class EchoWebSocket( websocket.WebSocketHandler ):
         absfreq = test_fft()
         message = json.dumps(absfreq)
 
-        if self.closed: return
-
-        self.write_message(message)
+        try:
+            self.write_message(message)
+        except websocket.WebSocketClosedError:
+            return
 
         ioloop_instance = tornado.ioloop.IOLoop.instance()
         ioloop_instance.add_timeout(datetime.timedelta(seconds=1), self.data)
@@ -56,6 +57,5 @@ def main( ):
     tornado.ioloop.IOLoop.instance().start()
 
 if __name__ == '__main__':
-    #test_fft()
     main()
 
