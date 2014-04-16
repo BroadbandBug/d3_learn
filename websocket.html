@@ -90,6 +90,8 @@ ws.onmessage = function(evt) {
       .datum(fft_data)
       .attr("class", "line")
       .attr("d", line);
+
+  ws.send( "Data graphed." );
 };
 
 </script>

@@ -25,6 +25,7 @@ class EchoWebSocket( websocket.WebSocketHandler ):
 
     def on_message( self, message ):
         print 'Received message: %s' % message
+        self.data()
 
     def close( self ):
         self.closed = True
@@ -38,13 +39,7 @@ class EchoWebSocket( websocket.WebSocketHandler ):
         absfreq = test_fft()
         message = json.dumps(absfreq)
 
-        try:
-            self.write_message(message)
-        except websocket.WebSocketClosedError:
-            return
-
-        ioloop_instance = tornado.ioloop.IOLoop.instance()
-        ioloop_instance.add_timeout(datetime.timedelta(seconds=1), self.data)
+        self.write_message(message)
 
 def main( ):
 
