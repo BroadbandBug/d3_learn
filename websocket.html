@@ -56,6 +56,21 @@ var svg = d3.select("body").append("svg")
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+svg.append("g")
+    .attr("class", "x axis")
+    .attr("transform", "translate(0," + height + ")")
+    .call(xAxis);
+
+svg.append("g")
+    .attr("class", "y axis")
+    .call(yAxis)
+  .append("text")
+    .attr("transform", "rotate(-90)")
+    .attr("y", 6)
+    .attr("dy", ".71em")
+    .style("text-anchor", "end")
+    .text("Magnitude");
+
 var ws;
 ws = new WebSocket("ws://localhost:8888/ws");
 
@@ -71,25 +86,19 @@ ws.onmessage = function(evt) {
   x.domain([0, fft_data.length - 1]);
   y.domain([0, d3.max(fft_data)]);
 
-  svg.append("g")
-      .attr("class", "x axis")
-      .attr("transform", "translate(0," + height + ")")
-      .call(xAxis);
-
-  svg.append("g")
-      .attr("class", "y axis")
-      .call(yAxis)
-    .append("text")
-      .attr("transform", "rotate(-90)")
-      .attr("y", 6)
-      .attr("dy", ".71em")
-      .style("text-anchor", "end")
-      .text("Magnitude");
-
   svg.selectAll("path")
       .datum(fft_data)
       .attr("class", "line")
       .attr("d", line);
+  
+  // TODO: Update the axises such that they don't slow things down
+  /*
+  svg.selectAll("g.y.axis")
+    .call(yAxis)
+
+  svg.selectAll("g.x.axis")
+    .call(xAxis)
+  */
 
   ws.send( "Data graphed." );
 };
