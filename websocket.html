@@ -81,17 +81,15 @@ ws.onmessage = function(evt) {
   var fft_data_str = JSON.parse(evt.data);
   fft_data = new Float32Array( fft_data_str );
 
-  //console.log( fft_data );
-  
   x.domain([0, fft_data.length - 1]);
   y.domain([0, d3.max(fft_data)]);
 
+  // Update the line
   svg.selectAll("path")
       .datum(fft_data)
-      .attr("class", "line")
       .attr("d", line);
   
-  // TODO: Update the axises such that they don't slow things down
+  // Update the axes
   svg.selectAll(".y.axis")
     .call(yAxis)
 

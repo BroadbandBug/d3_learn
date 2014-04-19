@@ -80,7 +80,7 @@ function shuffle(o){ //v1.0
 
 setInterval( function() {
 
-  for ( var fft_data=[],i=0; i<16; ++i) {
+  for ( var fft_data=[],i=0; i<512; ++i) {
     fft_data[i]=i;
   }
 
@@ -89,20 +89,18 @@ setInterval( function() {
   x.domain([0, fft_data.length - 1]);
   y.domain([0, d3.max(fft_data)]);
 
-  // TODO: Update the axises such that they don't slow things down
+  // Update the axes
   svg.select(".y.axis")
     .call(yAxis)
 
   svg.select(".x.axis")
     .call(xAxis)
-  /**/
 
+  // Update the line
   svg.selectAll("path")
       .datum(fft_data)
-      .attr("class", "line")
       .attr("d", line);
-  
 
-}, 1000);
+}, 10);
 
 </script>
