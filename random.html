@@ -71,34 +71,38 @@ svg.append("g")
     .style("text-anchor", "end")
     .text("Magnitude");
 
-var ws;
-ws = new WebSocket("ws://localhost:8888/ws");
-
 var fft_data;
 
-ws.onmessage = function(evt) {
+function shuffle(o){ //v1.0
+    for(var j, x, i = o.length; i; j = Math.floor(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
+    return o;
+};
 
-  var fft_data_str = JSON.parse(evt.data);
-  fft_data = new Float32Array( fft_data_str );
+setInterval( function() {
 
-  //console.log( fft_data );
-  
+  for ( var fft_data=[],i=0; i<16; ++i) {
+    fft_data[i]=i;
+  }
+
+  fft_data = shuffle( fft_data );
+
   x.domain([0, fft_data.length - 1]);
   y.domain([0, d3.max(fft_data)]);
+
+  // TODO: Update the axises such that they don't slow things down
+  svg.select(".y.axis")
+    .call(yAxis)
+
+  svg.select(".x.axis")
+    .call(xAxis)
+  /**/
 
   svg.selectAll("path")
       .datum(fft_data)
       .attr("class", "line")
       .attr("d", line);
   
-  // TODO: Update the axises such that they don't slow things down
-  svg.selectAll(".y.axis")
-    .call(yAxis)
 
-  svg.selectAll(".x.axis")
-    .call(xAxis)
-
-  ws.send( "Data graphed." );
-};
+}, 1000);
 
 </script>
